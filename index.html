@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pictoria — AI-Powered Visual Image Search</title>
+  <meta name="description" content="Pictoria is a professional desktop application that finds visually similar images across your folders using on-device AI — in seconds. Nothing ever leaves your PC." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-300: #f0abfc;
+      --primary-400: #e879f9;
+      --primary-500: #d946ef;
+      --primary-600: #c026d3;
+      --tertiary-300: #fdba74;
+      --tertiary-400: #fb923c;
+      --tertiary-500: #f97316;
+      --surface-100: #f5d0e8;
+      --surface-200: #e8b4d8;
+      --surface-300: #c890bc;
+      --surface-400: #a06090;
+      --surface-500: #7a4070;
+      --surface-600: #5a2a54;
+      --surface-700: #3d1f40;
+      --surface-800: #2d1f3d;
+      --surface-900: #221830;
+      --surface-950: #18121e;
+      --color-invalid: #f87171;
+      --font: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    html { font-size: 62.5%; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 1.6rem;
+      background: var(--surface-950);
+      color: var(--surface-200);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface-900); }
+    ::-webkit-scrollbar-thumb { background: rgba(217,70,239,0.3); border-radius: 3px; }
+
+    /* ── Utility ── */
+    .container { max-width: 116rem; margin: 0 auto; padding: 0 2.4rem; }
+    .gradient-text {
+      background: linear-gradient(120deg, #fce7f3 0%, var(--primary-300) 50%, var(--tertiary-300) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ══════════════════════════════════════════════════
+       NAV
+    ══════════════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.6rem 0;
+      background: rgba(24, 18, 30, 0.85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(217,70,239,0.1);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--surface-100);
+      text-decoration: none;
+    }
+
+    .nav-logo-dot {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-400));
+      box-shadow: 0 0 12px rgba(217,70,239,0.6);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 3.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--surface-400);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--surface-100); }
+
+    .nav-cta {
+      padding: 1rem 2.4rem;
+      border-radius: 0.8rem;
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
+      color: #fff !important;
+      font-weight: 600;
+      font-size: 1.4rem !important;
+      transition: box-shadow 0.2s, transform 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      box-shadow: 0 8px 24px rgba(217,70,239,0.4) !important;
+      transform: translateY(-1px);
+      color: #fff !important;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 8rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 20%, rgba(217,70,239,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(251,146,60,0.08) 0%, transparent 55%),
+        radial-gradient(rgba(217,70,239,0.04) 1px, transparent 1px);
+      background-size: auto, auto, 28px 28px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 72rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 1.6rem;
+      border-radius: 99px;
+      border: 1px solid rgba(217,70,239,0.3);
+      background: rgba(217,70,239,0.08);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary-300);
+      margin-bottom: 2.4rem;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-badge-dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: var(--primary-400);
+      box-shadow: 0 0 8px rgba(217,70,239,0.8);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-size: clamp(4rem, 6vw, 7.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 2.4rem;
+      color: var(--surface-100);
+    }
+
+    .hero-sub {
+      font-size: 2rem;
+      color: var(--surface-400);
+      line-height: 1.7;
+      margin-bottom: 4rem;
+      max-width: 56rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.4rem 3.2rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 600;
+      font-family: var(--font);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(217,70,239,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(217,70,239,0.45);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.4rem 3.2rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(217,70,239,0.35);
+      background: rgba(217,70,239,0.06);
+      color: var(--primary-300);
+      font-size: 1.6rem;
+      font-weight: 600;
+      font-family: var(--font);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: rgba(217,70,239,0.12);
+      border-color: var(--primary-400);
+    }
+
+    .hero-visual {
+      position: absolute;
+      right: -4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52rem;
+      height: 52rem;
+      pointer-events: none;
+    }
+
+    .hero-orb {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid;
+      animation: hero-spin linear infinite;
+    }
+
+    .hero-ring-1 {
+      width: 100%; height: 100%;
+      border-color: rgba(217,70,239,0.12);
+      animation-duration: 20s;
+    }
+
+    .hero-ring-2 {
+      width: 75%; height: 75%;
+      border-color: rgba(251,146,60,0.1);
+      animation-duration: 14s;
+      animation-direction: reverse;
+    }
+
+    .hero-ring-3 {
+      width: 50%; height: 50%;
+      border-color: rgba(217,70,239,0.16);
+      animation-duration: 9s;
+    }
+
+    @keyframes hero-spin { to { transform: rotate(360deg); } }
+
+    .hero-core {
+      width: 18rem;
+      height: 18rem;
+      border-radius: 3rem;
+      background: linear-gradient(135deg, rgba(217,70,239,0.15), rgba(251,146,60,0.1));
+      border: 1px solid rgba(217,70,239,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 60px rgba(217,70,239,0.15),
+        0 0 120px rgba(217,70,239,0.08);
+    }
+
+    .hero-icon {
+      font-size: 7.2rem;
+      filter: drop-shadow(0 0 24px rgba(217,70,239,0.5));
+    }
+
+    /* ══════════════════════════════════════════════════
+       STATS
+    ══════════════════════════════════════════════════ */
+    .stats {
+      padding: 6.4rem 0;
+      border-top: 1px solid rgba(217,70,239,0.08);
+      border-bottom: 1px solid rgba(217,70,239,0.08);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-value {
+      font-size: 4.8rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.8rem;
+    }
+
+    .stat-label {
+      font-size: 1.5rem;
+      color: var(--surface-500);
+    }
+
+    /* ══════════════════════════════════════════════════
+       FEATURES
+    ══════════════════════════════════════════════════ */
+    .section { padding: 10rem 0; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-400);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.6rem;
+    }
+
+    .section-title {
+      font-size: clamp(3.2rem, 4vw, 4.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--surface-100);
+      margin-bottom: 1.6rem;
+    }
+
+    .section-sub {
+      font-size: 1.8rem;
+      color: var(--surface-400);
+      max-width: 56rem;
+      line-height: 1.7;
+      margin-bottom: 6.4rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.4rem;
+    }
+
+    .feature-card {
+      padding: 3.2rem;
+      border-radius: 1.6rem;
+      border: 1px solid rgba(217,70,239,0.12);
+      background: rgba(34,24,48,0.5);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217,70,239,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(217,70,239,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    }
+
+    .feature-icon {
+      width: 5.2rem;
+      height: 5.2rem;
+      border-radius: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      font-size: 2.4rem;
+    }
+
+    .feature-icon-purple {
+      background: rgba(217,70,239,0.12);
+      border: 1px solid rgba(217,70,239,0.2);
+    }
+
+    .feature-icon-orange {
+      background: rgba(251,146,60,0.1);
+      border: 1px solid rgba(251,146,60,0.2);
+    }
+
+    .feature-icon-green {
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.2);
+    }
+
+    .feature-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--surface-100);
+      margin-bottom: 1rem;
+    }
+
+    .feature-desc {
+      font-size: 1.5rem;
+      color: var(--surface-500);
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════════════════════════ */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+      position: relative;
+    }
+
+    .how-grid::before {
+      content: '';
+      position: absolute;
+      top: 3.6rem;
+      left: calc(16.66% + 2rem);
+      right: calc(16.66% + 2rem);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(217,70,239,0.2), rgba(251,146,60,0.2));
+    }
+
+    .how-step { text-align: center; }
+
+    .how-number {
+      width: 7.2rem;
+      height: 7.2rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(217,70,239,0.15), rgba(251,146,60,0.1));
+      border: 1px solid rgba(217,70,239,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--primary-300);
+      margin: 0 auto 2rem;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 24px rgba(217,70,239,0.15);
+    }
+
+    .how-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--surface-100);
+      margin-bottom: 1rem;
+    }
+
+    .how-desc {
+      font-size: 1.5rem;
+      color: var(--surface-500);
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PRICING
+    ══════════════════════════════════════════════════ */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.4rem;
+      align-items: start;
+    }
+
+    .price-card {
+      padding: 3.2rem;
+      border-radius: 1.6rem;
+      border: 1px solid rgba(217,70,239,0.15);
+      background: rgba(34,20,48,0.5);
+      backdrop-filter: blur(12px);
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .price-card:hover { transform: translateY(-4px); }
+
+    .price-card--featured {
+      border-color: rgba(217,70,239,0.5);
+      background: rgba(50,18,65,0.7);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 60px rgba(217,70,239,0.1);
+    }
+
+    .price-card--featured:hover { transform: translateY(-12px); }
+
+    .price-popular {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--primary-500), var(--tertiary-400));
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 4px 1.6rem;
+      border-radius: 0 0 0.8rem 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .price-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--surface-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.6rem;
+    }
+
+    .price-amount {
+      font-size: 4.8rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--surface-100);
+      margin-bottom: 0.4rem;
+    }
+
+    .price-amount--featured {
+      background: linear-gradient(120deg, var(--primary-200, #f5d0fe), var(--tertiary-200, #fed7aa));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .price-period {
+      font-size: 1.4rem;
+      color: var(--surface-500);
+      margin-bottom: 3.2rem;
+    }
+
+    .price-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(217,70,239,0.15), transparent);
+      margin-bottom: 2.4rem;
+    }
+
+    .price-features { list-style: none; margin-bottom: 3.2rem; }
+
+    .price-features li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      color: var(--surface-400);
+      margin-bottom: 1.2rem;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      color: #34d399;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .price-btn {
+      width: 100%;
+      padding: 1.4rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(217,70,239,0.35);
+      background: rgba(217,70,239,0.08);
+      color: var(--primary-300);
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .price-btn:hover {
+      background: rgba(217,70,239,0.16);
+      border-color: var(--primary-400);
+    }
+
+    .price-btn--featured {
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(217,70,239,0.35);
+    }
+
+    .price-btn--featured:hover {
+      box-shadow: 0 8px 32px rgba(217,70,239,0.55);
+      transform: translateY(-1px);
+    }
+
+    /* ══════════════════════════════════════════════════
+       CONTACT
+    ══════════════════════════════════════════════════ */
+    .contact-card {
+      border-radius: 2.4rem;
+      padding: 6.4rem;
+      background: linear-gradient(160deg, var(--surface-900), rgba(34,14,50,0.98));
+      border: 1px solid rgba(217,70,239,0.2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% -10%, rgba(217,70,239,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 90%, rgba(251,146,60,0.08) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .contact-title {
+      position: relative;
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1.6rem;
+    }
+
+    .contact-sub {
+      position: relative;
+      font-size: 1.8rem;
+      color: var(--surface-400);
+      margin-bottom: 4rem;
+    }
+
+    .contact-methods {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 2.4rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.4rem 2.4rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(217,70,239,0.2);
+      background: rgba(45,31,61,0.6);
+      color: var(--surface-300);
+      font-size: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover {
+      border-color: rgba(217,70,239,0.45);
+      background: rgba(217,70,239,0.1);
+      color: var(--surface-100);
+      transform: translateY(-2px);
+    }
+
+    .contact-icon { font-size: 2rem; }
+
+    /* ══════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════ */
+    footer {
+      padding: 3.2rem 0;
+      border-top: 1px solid rgba(217,70,239,0.08);
+      text-align: center;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--surface-300);
+    }
+
+    .footer-copy {
+      font-size: 1.4rem;
+      color: var(--surface-600);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2.4rem;
+    }
+
+    .footer-links a {
+      font-size: 1.4rem;
+      color: var(--surface-500);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--surface-300); }
+
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .hero-visual { display: none; }
+      .features-grid, .how-grid, .pricing-grid, .stats-grid { grid-template-columns: 1fr; }
+      .how-grid::before { display: none; }
+      nav .nav-links { display: none; }
+      .contact-card { padding: 4rem 2.4rem; }
+      .footer-inner { flex-direction: column; gap: 1.6rem; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding-top: 10rem; }
+      .section { padding: 6.4rem 0; }
+      .hero-title { font-size: 3.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAV ══════════════════════════════════════════════ -->
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-dot"></div>
+          Pictoria
+        </a>
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How it Works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ══════════════════════════════════════════════ -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          AI-Powered Desktop Software
+        </div>
+        <h1 class="hero-title">
+          Find Images<br />
+          <span class="gradient-text">Visually, Instantly</span>
+        </h1>
+        <p class="hero-sub">
+          Pictoria is a professional desktop app that finds visually similar images
+          across your folders using on-device AI — in seconds. Search from your
+          system tray or a single global hotkey, fully offline.
+        </p>
+        <div class="hero-actions">
+          <a href="#features" class="btn-primary">
+            ✦ Explore Features
+          </a>
+          <a href="#contact" class="btn-outline">
+            Get in Touch
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-orb">
+        <div class="hero-ring hero-ring-1"></div>
+        <div class="hero-ring hero-ring-2"></div>
+        <div class="hero-ring hero-ring-3"></div>
+        <div class="hero-core">
+          <span class="hero-icon">🔍</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ STATS ══════════════════════════════════════════════ -->
+  <div class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value gradient-text">768</div>
+          <div class="stat-label">Dimensional AI Embeddings per Image</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value gradient-text">PSD</div>
+          <div class="stat-label">Pro Formats — JPG, PNG, TIFF, PSD &amp; PSB</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value gradient-text">100%</div>
+          <div class="stat-label">On-Device Processing — Your images never leave your PC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FEATURES ══════════════════════════════════════════ -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-label">✦ Features</div>
+      <h2 class="section-title">Everything you need to<br /><span class="gradient-text">search smarter</span></h2>
+      <p class="section-sub">Built for designers, studios, and creative professionals who work with large image libraries.</p>
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-purple">🧠</div>
+          <h3 class="feature-title">AI Visual Search</h3>
+          <p class="feature-desc">A neural image model understands what your pictures actually look like — not file names, tags, or metadata.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-orange">⚡</div>
+          <h3 class="feature-title">Lightning Fast</h3>
+          <p class="feature-desc">A native, purpose-built vector engine returns matches in milliseconds — even across folders with thousands of images.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-green">🔒</div>
+          <h3 class="feature-title">Fully Private &amp; Offline</h3>
+          <p class="feature-desc">All AI runs on your device. Your images never leave your computer, and search keeps working without internet.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-purple">📋</div>
+          <h3 class="feature-title">Paste to Search</h3>
+          <p class="feature-desc">Pick a file, drop an image, or just paste a screenshot or copied image straight from your clipboard to start a search.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-orange">👁️</div>
+          <h3 class="feature-title">Watch Folders</h3>
+          <p class="feature-desc">Index a folder once and Pictoria keeps it in sync automatically — new and changed files are re-indexed in the background.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-green">🖼️</div>
+          <h3 class="feature-title">Pro Format Support</h3>
+          <p class="feature-desc">Works with JPG, PNG, TIFF and professional Adobe Photoshop files (PSD &amp; PSB) — ideal for design and print workflows.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HOW IT WORKS ══════════════════════════════════════ -->
+  <section class="section" id="how" style="background: rgba(34,24,48,0.3);">
+    <div class="container">
+      <div class="section-label">✦ How It Works</div>
+      <h2 class="section-title">Simple as <span class="gradient-text">1 — 2 — 3</span></h2>
+      <p class="section-sub">No complex setup. No cloud uploads. Just open, search, find.</p>
+
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-number">1</div>
+          <h3 class="how-title">Add Your Folders</h3>
+          <p class="how-desc">Point Pictoria to any folders on your PC. It indexes them once with AI embeddings, then keeps them in sync automatically.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-number">2</div>
+          <h3 class="how-title">Drop or Paste an Image</h3>
+          <p class="how-desc">Choose a reference image, paste one from your clipboard, or open Pictoria instantly with the global hotkey from anywhere.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-number">3</div>
+          <h3 class="how-title">Get Ranked Matches</h3>
+          <p class="how-desc">Pictoria returns the most visually similar images, ranked by similarity score — instantly, right on your machine.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PRICING ═══════════════════════════════════════════ -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-label">✦ Pricing</div>
+      <h2 class="section-title">Simple, <span class="gradient-text">transparent pricing</span></h2>
+      <p class="section-sub">Start with a free trial — no credit card required. Upgrade whenever you're ready.</p>
+
+      <div class="pricing-grid">
+
+        <div class="price-card">
+          <div class="price-name">Monthly</div>
+          <div class="price-amount">₹799</div>
+          <div class="price-period">for 30 days</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>AI visual search</li>
+            <li>All formats (JPG–PSD)</li>
+            <li>Email support</li>
+          </ul>
+          <button class="price-btn">Get Started</button>
+        </div>
+
+        <div class="price-card price-card--featured">
+          <div class="price-popular">Most Popular</div>
+          <div class="price-name">Quarterly</div>
+          <div class="price-amount price-amount--featured">₹1,999</div>
+          <div class="price-period">for 90 days</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>AI visual search</li>
+            <li>All formats (JPG–PSD)</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="price-btn price-btn--featured">Get Started</button>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Yearly</div>
+          <div class="price-amount">₹7,499</div>
+          <div class="price-period">for 365 days — save 22%</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>AI visual search</li>
+            <li>All formats (JPG–PSD)</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="price-btn">Get Started</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CONTACT ═══════════════════════════════════════════ -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="contact-card">
+        <h2 class="contact-title"><span class="gradient-text">Get in Touch</span></h2>
+        <p class="contact-sub">Have questions? Want to request access or discuss a business plan? We'd love to hear from you.</p>
+        <div class="contact-methods">
+          <a href="mailto:aatmanbhoraniya12@gmail.com" class="contact-item">
+            <span class="contact-icon">✉️</span>
+            aatmanbhoraniya12@gmail.com
+          </a>
+          <a href="https://github.com/Aatmanbho2429" target="_blank" class="contact-item">
+            <span class="contact-icon">🐙</span>
+            github.com/Aatmanbho2429
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ════════════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <div class="nav-logo-dot"></div>
+          Pictoria
+        </div>
+        <div class="footer-copy">© 2026 Pictoria. All rights reserved.</div>
+        <div class="footer-links">
+          <a href="mailto:aatmanbhoraniya12@gmail.com">Contact</a>
+          <a href="https://github.com/Aatmanbho2429" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
