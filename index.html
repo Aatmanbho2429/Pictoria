@@ -506,6 +506,86 @@
     }
 
     /* ══════════════════════════════════════════════════
+       DOWNLOAD
+    ══════════════════════════════════════════════════ */
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.4rem;
+    }
+
+    .download-card {
+      padding: 3.2rem;
+      border-radius: 1.6rem;
+      border: 1px solid rgba(217,70,239,0.15);
+      background: rgba(34,24,48,0.5);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+
+    .download-card:hover {
+      border-color: rgba(217,70,239,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    }
+
+    .download-os-icon {
+      width: 6.4rem;
+      height: 6.4rem;
+      margin: 0 auto 2rem;
+      border-radius: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2rem;
+      background: rgba(217,70,239,0.1);
+      border: 1px solid rgba(217,70,239,0.2);
+    }
+
+    .download-os {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--surface-100);
+      margin-bottom: 0.6rem;
+    }
+
+    .download-arch {
+      font-size: 1.4rem;
+      color: var(--surface-500);
+      margin-bottom: 2.4rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      width: 100%;
+      padding: 1.4rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-family: var(--font);
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 4px 20px rgba(217,70,239,0.3);
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(217,70,239,0.5);
+    }
+
+    .download-note {
+      margin-top: 1.6rem;
+      font-size: 1.3rem;
+      color: var(--surface-600);
+    }
+
+    /* ══════════════════════════════════════════════════
        PRICING
     ══════════════════════════════════════════════════ */
     .pricing-grid {
@@ -588,7 +668,7 @@
       margin-bottom: 2.4rem;
     }
 
-    .price-features { list-style: none; margin-bottom: 3.2rem; }
+    .price-features { list-style: none; }
 
     .price-features li {
       display: flex;
@@ -599,42 +679,13 @@
       margin-bottom: 1.2rem;
     }
 
+    .price-features li:last-child { margin-bottom: 0; }
+
     .price-features li::before {
       content: '✓';
       color: #34d399;
       font-weight: 700;
       flex-shrink: 0;
-    }
-
-    .price-btn {
-      width: 100%;
-      padding: 1.4rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(217,70,239,0.35);
-      background: rgba(217,70,239,0.08);
-      color: var(--primary-300);
-      font-size: 1.5rem;
-      font-weight: 600;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .price-btn:hover {
-      background: rgba(217,70,239,0.16);
-      border-color: var(--primary-400);
-    }
-
-    .price-btn--featured {
-      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
-      border: none;
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(217,70,239,0.35);
-    }
-
-    .price-btn--featured:hover {
-      box-shadow: 0 8px 32px rgba(217,70,239,0.55);
-      transform: translateY(-1px);
     }
 
     /* ══════════════════════════════════════════════════
@@ -754,7 +805,7 @@
     ══════════════════════════════════════════════════ */
     @media (max-width: 900px) {
       .hero-visual { display: none; }
-      .features-grid, .how-grid, .pricing-grid, .stats-grid { grid-template-columns: 1fr; }
+      .features-grid, .how-grid, .pricing-grid, .stats-grid, .download-grid { grid-template-columns: 1fr; }
       .how-grid::before { display: none; }
       nav .nav-links { display: none; }
       .contact-card { padding: 4rem 2.4rem; }
@@ -781,6 +832,7 @@
         <ul class="nav-links">
           <li><a href="#features">Features</a></li>
           <li><a href="#how">How it Works</a></li>
+          <li><a href="#download">Download</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#contact" class="nav-cta">Contact Us</a></li>
         </ul>
@@ -807,11 +859,11 @@
           system tray or a single global hotkey, fully offline.
         </p>
         <div class="hero-actions">
-          <a href="#features" class="btn-primary">
-            ✦ Explore Features
+          <a href="#download" class="btn-primary">
+            ⬇ Download Pictoria
           </a>
-          <a href="#contact" class="btn-outline">
-            Get in Touch
+          <a href="#features" class="btn-outline">
+            Explore Features
           </a>
         </div>
       </div>
@@ -924,12 +976,49 @@
     </div>
   </section>
 
+  <!-- ══ DOWNLOAD ══════════════════════════════════════════ -->
+  <section class="section" id="download">
+    <div class="container">
+      <div class="section-label">✦ Download</div>
+      <h2 class="section-title">Get <span class="gradient-text">Pictoria</span></h2>
+      <p class="section-sub">Pick the build for your computer and start your free trial — latest version <strong data-version style="color: var(--primary-300);">v1.1.23</strong>.</p>
+
+      <div class="download-grid">
+
+        <div class="download-card">
+          <div class="download-os-icon">🪟</div>
+          <h3 class="download-os">Windows</h3>
+          <p class="download-arch">64-bit · .exe installer</p>
+          <a class="download-btn" data-dl="windows" href="https://github.com/Aatmanbho2429/Visara-Tauri/releases/latest">⬇ Download</a>
+          <p class="download-note">Windows 10 &amp; 11</p>
+        </div>
+
+        <div class="download-card">
+          <div class="download-os-icon">🍎</div>
+          <h3 class="download-os">macOS — Apple Silicon</h3>
+          <p class="download-arch">M1 / M2 / M3 · .dmg</p>
+          <a class="download-btn" data-dl="mac-arm" href="https://github.com/Aatmanbho2429/Visara-Tauri/releases/latest">⬇ Download</a>
+          <p class="download-note">macOS 11 Big Sur or later</p>
+        </div>
+
+        <div class="download-card">
+          <div class="download-os-icon">🍏</div>
+          <h3 class="download-os">macOS — Intel</h3>
+          <p class="download-arch">Intel-based Macs · .dmg</p>
+          <a class="download-btn" data-dl="mac-intel" href="https://github.com/Aatmanbho2429/Visara-Tauri/releases/latest">⬇ Download</a>
+          <p class="download-note">macOS 11 Big Sur or later</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ══ PRICING ═══════════════════════════════════════════ -->
   <section class="section" id="pricing">
     <div class="container">
       <div class="section-label">✦ Pricing</div>
       <h2 class="section-title">Simple, <span class="gradient-text">transparent pricing</span></h2>
-      <p class="section-sub">Start with a free trial — no credit card required. Upgrade whenever you're ready.</p>
+      <p class="section-sub">Start with a 45-days free trial — no credit card required. Upgrade whenever you're ready, right inside the app.</p>
 
       <div class="pricing-grid">
 
@@ -943,7 +1032,6 @@
             <li>All formats (JPG–PSD)</li>
             <li>Email support</li>
           </ul>
-          <button class="price-btn">Get Started</button>
         </div>
 
         <div class="price-card price-card--featured">
@@ -957,7 +1045,6 @@
             <li>All formats (JPG–PSD)</li>
             <li>Priority support</li>
           </ul>
-          <button class="price-btn price-btn--featured">Get Started</button>
         </div>
 
         <div class="price-card">
@@ -970,7 +1057,6 @@
             <li>All formats (JPG–PSD)</li>
             <li>Priority support</li>
           </ul>
-          <button class="price-btn">Get Started</button>
         </div>
 
       </div>
@@ -988,10 +1074,10 @@
             <span class="contact-icon">✉️</span>
             aatmanbhoraniya12@gmail.com
           </a>
-          <a href="https://github.com/Aatmanbho2429" target="_blank" class="contact-item">
+          <!-- <a href="https://github.com/Aatmanbho2429" target="_blank" class="contact-item">
             <span class="contact-icon">🐙</span>
             github.com/Aatmanbho2429
-          </a>
+          </a> -->
         </div>
       </div>
     </div>
@@ -1008,11 +1094,38 @@
         <div class="footer-copy">© 2026 Pictoria. All rights reserved.</div>
         <div class="footer-links">
           <a href="mailto:aatmanbhoraniya12@gmail.com">Contact</a>
-          <a href="https://github.com/Aatmanbho2429" target="_blank">GitHub</a>
+          <!-- <a href="https://github.com/Aatmanbho2429" target="_blank">GitHub</a> -->
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- ══ DOWNLOAD LINKS ════════════════════════════════════
+       ⚠️  EACH NEW RELEASE: change ONLY the VERSION below.
+       All three download buttons + the version label update
+       automatically from it. -->
+  <script>
+    (function () {
+      const REPO    = "Aatmanbho2429/Visara-Tauri";
+      const VERSION = "1.1.23"; // ← update this on every new release
+
+      const base = "https://github.com/" + REPO + "/releases/download/v" + VERSION + "/";
+      const assets = {
+        "windows":   "Pictoria_" + VERSION + "_x64-setup.exe",
+        "mac-arm":   "Pictoria_" + VERSION + "_aarch64.dmg",
+        "mac-intel": "Pictoria_" + VERSION + "_x64.dmg"
+      };
+
+      document.querySelectorAll("[data-dl]").forEach(function (el) {
+        const key = el.getAttribute("data-dl");
+        if (assets[key]) el.setAttribute("href", base + assets[key]);
+      });
+
+      document.querySelectorAll("[data-version]").forEach(function (el) {
+        el.textContent = "v" + VERSION;
+      });
+    })();
+  </script>
 
 </body>
 </html>
