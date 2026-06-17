@@ -5,9 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pictoria — AI-Powered Visual Image Search</title>
   <meta name="description" content="Pictoria is a professional desktop application that finds visually similar images across your folders using on-device AI — in seconds. Nothing ever leaves your PC." />
+  <link rel="shortcut icon" href="icons/favicon.ico" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Pictoria",
+    "alternateName": "Pictoria Image Search",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Windows, macOS",
+    "description": "Pictoria is an AI-powered visual search app that finds similar tile designs and images across your folders, fully offline.",
+    "url": "https://pictoria.app/",
+    "image": "https://pictoria.app/icons/og-image.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "799",
+      "priceCurrency": "INR"
+    }
+  }
+  </script>
+
+  <!-- Structured data: FAQ (mirrors the visible FAQ section below) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Pictoria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pictoria is a desktop image search application that uses on-device AI to find visually similar images and tile designs across your folders, without uploading anything to the cloud."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use Pictoria for tile design search?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Pictoria is built for designers and tile catalog teams who need to search large image libraries by visual similarity — drop in a reference tile and get ranked matches from your own catalog in seconds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Pictoria's image search work offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. All AI processing happens on your device. Your images and tile designs never leave your computer, and search keeps working without an internet connection."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which file formats does Pictoria support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pictoria supports JPG, PNG, TIFF, and professional Adobe formats including PSD and PSB — ideal for design and print workflows."
+        }
+      }
+    ]
+  }
+  </script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,9 +94,37 @@
       --surface-950: #18121e;
       --color-invalid: #f87171;
       --font: 'Space Grotesk', system-ui, sans-serif;
+
+      /* tile-mockup palette — warm neutrals so AI demo swatches read as real material, not UI chrome */
+      --clay-100: #ece1cb;
+      --clay-200: #d9c6a0;
+      --clay-300: #c9b186;
+      --clay-400: #b89c6e;
+      --mauve-100: #e7e0e8;
+      --mauve-200: #cdb8c9;
+      --mauve-300: #b48fae;
+      --mauve-400: #9c6f95;
+      --taupe-100: #e3ddd4;
+      --taupe-200: #c7b9a4;
+      --taupe-300: #a89476;
+      --wood-100: #9c6840;
+      --wood-200: #8f5a3a;
+      --wood-300: #7a4a2e;
+      --wood-400: #6e4226;
+      --sage-100: #8aa6a3;
+      --sage-200: #6f8c89;
     }
 
     html { font-size: 62.5%; scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     body {
       font-family: var(--font);
@@ -43,6 +134,8 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--primary-400); outline-offset: 2px; }
 
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; }
@@ -87,12 +180,18 @@
       text-decoration: none;
     }
 
-    .nav-logo-dot {
-      width: 1rem;
-      height: 1rem;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-400));
-      box-shadow: 0 0 12px rgba(217,70,239,0.6);
+    .logo-mark {
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 0.8rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 16px rgba(217,70,239,0.35);
+    }
+
+    .footer-logo .logo-mark {
+      width: 2.4rem;
+      height: 2.4rem;
+      box-shadow: none;
     }
 
     .nav-links {
@@ -453,57 +552,307 @@
     }
 
     /* ══════════════════════════════════════════════════
-       HOW IT WORKS
+       HOW IT WORKS — visual tile-search walkthrough
     ══════════════════════════════════════════════════ */
-    .how-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4rem;
+    .how-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 1.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .how-panel {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 2.8rem 2.4rem 2.4rem;
+      border-radius: 1.6rem;
+      border: 1px solid rgba(217,70,239,0.15);
+      background: rgba(34,24,48,0.5);
+      backdrop-filter: blur(12px);
       position: relative;
     }
 
-    .how-grid::before {
-      content: '';
+    .how-panel-badge {
       position: absolute;
-      top: 3.6rem;
-      left: calc(16.66% + 2rem);
-      right: calc(16.66% + 2rem);
-      height: 1px;
-      background: linear-gradient(90deg, rgba(217,70,239,0.2), rgba(251,146,60,0.2));
-    }
-
-    .how-step { text-align: center; }
-
-    .how-number {
-      width: 7.2rem;
-      height: 7.2rem;
+      top: -1.4rem;
+      left: 2.4rem;
+      width: 3.2rem;
+      height: 3.2rem;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(217,70,239,0.15), rgba(251,146,60,0.1));
-      border: 1px solid rgba(217,70,239,0.3);
+      background: linear-gradient(135deg, var(--primary-500), var(--tertiary-500));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.4rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      color: var(--primary-300);
-      margin: 0 auto 2rem;
-      position: relative;
-      z-index: 1;
-      box-shadow: 0 0 24px rgba(217,70,239,0.15);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(217,70,239,0.45);
+      z-index: 2;
+    }
+
+    .how-arrow {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.4rem;
+      color: var(--primary-400);
+      font-size: 2rem;
+      opacity: 0.7;
+    }
+
+    .how-mock {
+      width: 100%;
+      border-radius: 1.2rem;
+      background: rgba(20, 14, 26, 0.6);
+      border: 1px solid rgba(217,70,239,0.1);
+      padding: 1.6rem;
+      margin-bottom: 2rem;
+      min-height: 19rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .how-title {
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 600;
       color: var(--surface-100);
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .how-desc {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: var(--surface-500);
-      line-height: 1.7;
+      line-height: 1.6;
     }
+
+    /* tile swatches — shared base */
+    .tile-swatch {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
+    }
+
+    .tile-swatch::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        118deg,
+        transparent 0 6px,
+        rgba(255,255,255,0.16) 6px 7px,
+        transparent 7px 17px,
+        rgba(90,65,40,0.16) 17px 18px
+      );
+      mix-blend-mode: overlay;
+    }
+
+    .tile-marble-a  { background: linear-gradient(125deg, var(--clay-100) 0%, var(--clay-200) 35%, var(--clay-300) 55%, var(--clay-100) 75%, var(--clay-400) 100%); }
+    .tile-marble-a2 { background: linear-gradient(102deg, var(--clay-100) 0%, var(--clay-300) 40%, var(--clay-200) 60%, var(--clay-400) 100%); }
+    .tile-marble-b  { background: linear-gradient(125deg, var(--mauve-100) 0%, var(--mauve-200) 35%, var(--mauve-300) 55%, var(--mauve-100) 75%, var(--mauve-400) 100%); }
+    .tile-marble-c  { background: linear-gradient(125deg, var(--taupe-100) 0%, var(--taupe-200) 35%, var(--taupe-300) 55%, var(--taupe-100) 75%, var(--taupe-300) 100%); }
+
+    .tile-geo {
+      background:
+        conic-gradient(var(--surface-800) 0% 25%, var(--clay-400) 25% 50%, var(--wood-400) 50% 75%, var(--surface-700) 75% 100%);
+    }
+    .tile-geo::after { content: none; }
+
+    .tile-wood {
+      background: repeating-linear-gradient(90deg, var(--wood-200) 0 4px, var(--wood-300) 4px 8px, var(--wood-100) 8px 12px, var(--wood-400) 12px 16px);
+    }
+    .tile-wood::after { content: none; }
+
+    .tile-subway {
+      background: linear-gradient(160deg, var(--sage-100) 0%, var(--sage-200) 100%);
+    }
+    .tile-subway::after { content: none; }
+
+    .tile-terrazzo {
+      background:
+        radial-gradient(circle at 20% 30%, var(--primary-300) 0 4%, transparent 5%),
+        radial-gradient(circle at 70% 20%, var(--tertiary-300) 0 3%, transparent 4%),
+        radial-gradient(circle at 45% 60%, var(--clay-100) 0 5%, transparent 6%),
+        radial-gradient(circle at 80% 75%, var(--mauve-200) 0 4%, transparent 5%),
+        radial-gradient(circle at 15% 80%, var(--tertiary-300) 0 3%, transparent 4%),
+        var(--surface-700);
+    }
+    .tile-terrazzo::after { content: none; }
+
+    /* Step 1 — folder of tiles being indexed */
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7rem;
+      position: relative;
+    }
+
+    .folder-grid .tile-swatch { animation: tile-fade-in 0.5s ease both; }
+    .folder-grid .tile-swatch:nth-child(1) { animation-delay: 0.05s; }
+    .folder-grid .tile-swatch:nth-child(2) { animation-delay: 0.15s; }
+    .folder-grid .tile-swatch:nth-child(3) { animation-delay: 0.25s; }
+    .folder-grid .tile-swatch:nth-child(4) { animation-delay: 0.35s; }
+    .folder-grid .tile-swatch:nth-child(5) { animation-delay: 0.45s; }
+    .folder-grid .tile-swatch:nth-child(6) { animation-delay: 0.55s; }
+
+    @keyframes tile-fade-in {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-400), transparent);
+      box-shadow: 0 0 12px rgba(217,70,239,0.8);
+      animation: scan-sweep 2.4s ease-in-out infinite;
+    }
+
+    @keyframes scan-sweep {
+      0%   { top: 0%; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .index-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.4rem;
+      font-size: 1.2rem;
+      color: var(--surface-500);
+    }
+
+    .index-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+      margin-left: 1.2rem;
+      overflow: hidden;
+    }
+
+    .index-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary-500), var(--tertiary-400));
+      animation: index-fill 2.4s ease-in-out infinite;
+    }
+
+    @keyframes index-fill {
+      0%   { width: 0%; }
+      90%  { width: 100%; }
+      100% { width: 100%; }
+    }
+
+    /* Step 2 — drop / paste a reference tile */
+    .drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.4rem;
+    }
+
+    .drop-frame {
+      width: 9.6rem;
+      border: 1.5px dashed rgba(217,70,239,0.4);
+      border-radius: 1rem;
+      padding: 0.6rem;
+      animation: drop-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes drop-pulse {
+      0%, 100% { border-color: rgba(217,70,239,0.4); }
+      50%      { border-color: rgba(217,70,239,0.85); }
+    }
+
+    .hotkey-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.6rem;
+      background: rgba(217,70,239,0.1);
+      border: 1px solid rgba(217,70,239,0.25);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-300);
+      letter-spacing: 0.02em;
+    }
+
+    .hotkey-key {
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.4rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 1.1rem;
+      color: var(--surface-100);
+    }
+
+    .drop-caption {
+      font-size: 1.2rem;
+      color: var(--surface-600);
+      text-align: center;
+    }
+
+    /* Step 3 — ranked results */
+    .results-list { display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem;
+      border-radius: 0.8rem;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .result-row--top {
+      background: rgba(217,70,239,0.08);
+      box-shadow: inset 0 0 0 1px rgba(217,70,239,0.3);
+    }
+
+    .result-row .tile-swatch { width: 3.6rem; flex-shrink: 0; }
+
+    .result-meta { flex: 1; min-width: 0; }
+
+    .result-pct {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--surface-100);
+      margin-bottom: 0.3rem;
+    }
+
+    .result-row--top .result-pct { color: var(--primary-300); }
+
+    .result-bar {
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .result-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary-500), var(--tertiary-400));
+      width: 0%;
+      animation: result-fill 0.8s ease-out forwards;
+    }
+
+    .result-row:nth-child(1) .result-bar-fill { animation-delay: 0.1s; }
+    .result-row:nth-child(2) .result-bar-fill { animation-delay: 0.3s; }
+    .result-row:nth-child(3) .result-bar-fill { animation-delay: 0.5s; }
+    .result-row:nth-child(4) .result-bar-fill { animation-delay: 0.7s; }
+
+    @keyframes result-fill { to { width: var(--fill); } }
 
     /* ══════════════════════════════════════════════════
        DOWNLOAD
@@ -689,6 +1038,37 @@
     }
 
     /* ══════════════════════════════════════════════════
+       FAQ
+    ══════════════════════════════════════════════════ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+      max-width: 84rem;
+    }
+
+    .faq-item {
+      padding: 2.4rem 2.8rem;
+      border-radius: 1.4rem;
+      border: 1px solid rgba(217,70,239,0.12);
+      background: rgba(34,24,48,0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .faq-q {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--surface-100);
+      margin-bottom: 0.8rem;
+    }
+
+    .faq-a {
+      font-size: 1.5rem;
+      color: var(--surface-500);
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════════════
        CONTACT
     ══════════════════════════════════════════════════ */
     .contact-card {
@@ -805,8 +1185,9 @@
     ══════════════════════════════════════════════════ */
     @media (max-width: 900px) {
       .hero-visual { display: none; }
-      .features-grid, .how-grid, .pricing-grid, .stats-grid, .download-grid { grid-template-columns: 1fr; }
-      .how-grid::before { display: none; }
+      .features-grid, .pricing-grid, .stats-grid, .download-grid { grid-template-columns: 1fr; }
+      .how-flow { flex-direction: column; }
+      .how-arrow { width: auto; height: 2.4rem; transform: rotate(90deg); }
       nav .nav-links { display: none; }
       .contact-card { padding: 4rem 2.4rem; }
       .footer-inner { flex-direction: column; gap: 1.6rem; }
@@ -816,6 +1197,8 @@
       .hero { padding-top: 10rem; }
       .section { padding: 6.4rem 0; }
       .hero-title { font-size: 3.6rem; }
+      .how-panel { padding: 2.8rem 1.8rem 2rem; }
+      .faq-item { padding: 2rem 2rem; }
     }
   </style>
 </head>
@@ -826,7 +1209,7 @@
     <div class="container">
       <div class="nav-inner">
         <a href="#" class="nav-logo">
-          <div class="nav-logo-dot"></div>
+          <img src="icons/logo-nav.png" alt="Pictoria logo" width="32" height="32" class="logo-mark" />
           Pictoria
         </a>
         <ul class="nav-links">
@@ -834,6 +1217,7 @@
           <li><a href="#how">How it Works</a></li>
           <li><a href="#download">Download</a></li>
           <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
           <li><a href="#contact" class="nav-cta">Contact Us</a></li>
         </ul>
       </div>
@@ -847,7 +1231,7 @@
       <div class="hero-content">
         <div class="hero-badge">
           <div class="hero-badge-dot"></div>
-          AI-Powered Desktop Software
+          AI Image &amp; Tile Search Software
         </div>
         <h1 class="hero-title">
           Find Images<br />
@@ -855,7 +1239,7 @@
         </h1>
         <p class="hero-sub">
           Pictoria is a professional desktop app that finds visually similar images
-          across your folders using on-device AI — in seconds. Search from your
+          and tile designs across your folders using on-device AI — in seconds. Search from your
           system tray or a single global hotkey, fully offline.
         </p>
         <div class="hero-actions">
@@ -905,7 +1289,7 @@
     <div class="container">
       <div class="section-label">✦ Features</div>
       <h2 class="section-title">Everything you need to<br /><span class="gradient-text">search smarter</span></h2>
-      <p class="section-sub">Built for designers, studios, and creative professionals who work with large image libraries.</p>
+      <p class="section-sub">Built for designers, studios, and tile catalog teams who work with large image libraries and need fast, accurate tile design search.</p>
 
       <div class="features-grid">
 
@@ -954,24 +1338,93 @@
     <div class="container">
       <div class="section-label">✦ How It Works</div>
       <h2 class="section-title">Simple as <span class="gradient-text">1 — 2 — 3</span></h2>
-      <p class="section-sub">No complex setup. No cloud uploads. Just open, search, find.</p>
+      <p class="section-sub">No complex setup. No cloud uploads. Here's the same tile search a designer runs every day, end to end.</p>
 
-      <div class="how-grid">
-        <div class="how-step">
-          <div class="how-number">1</div>
-          <h3 class="how-title">Add Your Folders</h3>
-          <p class="how-desc">Point Pictoria to any folders on your PC. It indexes them once with AI embeddings, then keeps them in sync automatically.</p>
+      <div class="how-flow">
+
+        <!-- STEP 1 — index a folder of tiles -->
+        <div class="how-panel">
+          <div class="how-panel-badge">1</div>
+          <div class="how-mock">
+            <div class="folder-grid" style="position:relative;">
+              <div class="tile-swatch tile-marble-a"></div>
+              <div class="tile-swatch tile-marble-b"></div>
+              <div class="tile-swatch tile-geo"></div>
+              <div class="tile-swatch tile-wood"></div>
+              <div class="tile-swatch tile-subway"></div>
+              <div class="tile-swatch tile-marble-c"></div>
+              <div class="scan-line"></div>
+            </div>
+            <div class="index-status">
+              <span>Indexing catalog…</span>
+              <div class="index-bar"><div class="index-bar-fill"></div></div>
+            </div>
+          </div>
+          <h3 class="how-title">Add your folders</h3>
+          <p class="how-desc">Point Pictoria at your tile catalog once. It embeds every image with AI and keeps the index in sync automatically.</p>
         </div>
-        <div class="how-step">
-          <div class="how-number">2</div>
-          <h3 class="how-title">Drop or Paste an Image</h3>
-          <p class="how-desc">Choose a reference image, paste one from your clipboard, or open Pictoria instantly with the global hotkey from anywhere.</p>
+
+        <div class="how-arrow">→</div>
+
+        <!-- STEP 2 — drop / paste reference tile -->
+        <div class="how-panel">
+          <div class="how-panel-badge">2</div>
+          <div class="how-mock">
+            <div class="drop-zone">
+              <div class="drop-frame">
+                <div class="tile-swatch tile-marble-a"></div>
+              </div>
+              <div class="hotkey-pill">
+                <span class="hotkey-key">Ctrl</span>+<span class="hotkey-key">Shift</span>+<span class="hotkey-key">V</span>
+              </div>
+              <p class="drop-caption">Pasted from clipboard — a marble sample photographed on-site</p>
+            </div>
+          </div>
+          <h3 class="how-title">Drop or paste an image</h3>
+          <p class="how-desc">A client sends a reference photo on WhatsApp. Paste it straight in, or trigger Pictoria from anywhere with the global hotkey.</p>
         </div>
-        <div class="how-step">
-          <div class="how-number">3</div>
-          <h3 class="how-title">Get Ranked Matches</h3>
-          <p class="how-desc">Pictoria returns the most visually similar images, ranked by similarity score — instantly, right on your machine.</p>
+
+        <div class="how-arrow">→</div>
+
+        <!-- STEP 3 — ranked matches -->
+        <div class="how-panel">
+          <div class="how-panel-badge">3</div>
+          <div class="how-mock">
+            <div class="results-list">
+              <div class="result-row result-row--top">
+                <div class="tile-swatch tile-marble-a2"></div>
+                <div class="result-meta">
+                  <div class="result-pct">98% match</div>
+                  <div class="result-bar"><div class="result-bar-fill" style="--fill:98%"></div></div>
+                </div>
+              </div>
+              <div class="result-row">
+                <div class="tile-swatch tile-marble-b"></div>
+                <div class="result-meta">
+                  <div class="result-pct">94% match</div>
+                  <div class="result-bar"><div class="result-bar-fill" style="--fill:94%"></div></div>
+                </div>
+              </div>
+              <div class="result-row">
+                <div class="tile-swatch tile-marble-c"></div>
+                <div class="result-meta">
+                  <div class="result-pct">89% match</div>
+                  <div class="result-bar"><div class="result-bar-fill" style="--fill:89%"></div></div>
+                </div>
+              </div>
+              <div class="result-row">
+                <div class="tile-swatch tile-terrazzo"></div>
+                <div class="result-meta">
+                  <div class="result-pct">81% match</div>
+                  <div class="result-bar"><div class="result-bar-fill" style="--fill:81%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3 class="how-title">Get ranked matches</h3>
+          <p class="how-desc">Pictoria returns the closest tiles in your catalog, ranked by visual similarity — ready to drop into a catalog or send back to the client.</p>
         </div>
+
       </div>
     </div>
   </section>
@@ -1063,6 +1516,36 @@
     </div>
   </section>
 
+  <!-- ══ FAQ ════════════════════════════════════════════════
+       Visible content here intentionally mirrors the FAQPage
+       JSON-LD in <head> — keep both in sync if you edit either. -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-label">✦ FAQ</div>
+      <h2 class="section-title">Questions about <span class="gradient-text">Pictoria</span></h2>
+      <p class="section-sub">A few things people usually ask before trying our AI image and tile search software.</p>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3 class="faq-q">What is Pictoria?</h3>
+          <p class="faq-a">Pictoria is a desktop image search application that uses on-device AI to find visually similar images and tile designs across your folders, without uploading anything to the cloud.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Can I use Pictoria for tile design search?</h3>
+          <p class="faq-a">Yes. Pictoria is built for designers and tile catalog teams who need to search large image libraries by visual similarity — drop in a reference tile and get ranked matches from your own catalog in seconds.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Does Pictoria's image search work offline?</h3>
+          <p class="faq-a">Yes. All AI processing happens on your device. Your images and tile designs never leave your computer, and search keeps working without an internet connection.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Which file formats does Pictoria support?</h3>
+          <p class="faq-a">Pictoria supports JPG, PNG, TIFF, and professional Adobe formats including PSD and PSB — ideal for design and print workflows.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══ CONTACT ═══════════════════════════════════════════ -->
   <section class="section" id="contact">
     <div class="container">
@@ -1088,7 +1571,7 @@
     <div class="container">
       <div class="footer-inner">
         <div class="footer-logo">
-          <div class="nav-logo-dot"></div>
+          <img src="icons/logo-nav.png" alt="Pictoria logo" width="24" height="24" class="logo-mark" />
           Pictoria
         </div>
         <div class="footer-copy">© 2026 Pictoria. All rights reserved.</div>
